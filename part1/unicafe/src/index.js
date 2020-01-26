@@ -1,50 +1,27 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Positive = ({ good, all }) => {
-    const pos_ratio = good / all
-    if (isNaN(pos_ratio)) {
-        return (
-            <div>positive %</div>
-        )
-    }
-    return (
-        <div>positive {pos_ratio} %</div>
-    )
-}
 
-const Average = ({ good, bad, all }) => {
-    const avg = (good + bad * (-1)) / all
-    if (isNaN(avg)) {
-        return (
-            <div>average</div>
-        )
-    }
-    return (
-        <div>average {avg}</div>
-    )
-}
-
-const Total = ({ rating, value }) => {
-    return (<div>{rating} {value}</div>)
-}
-
-const StatisticLine = ({text, value}) => <div>{text} {value}</div>
+const StatisticLine = ({ text, value }) =><tr><td>{text}</td><td>{value}</td></tr>
 
 const Statistics = ({ good, neutral, bad, all }) => {
-    if(all==0) {
+    if (all === 0) {
         return (<div>No feedback given</div>)
     }
-    const pos = good/all
+    const pos = good / all
     return (
-        <div>
-            <StatisticLine text="good" value ={good} />
-            <StatisticLine text="neutral" value ={neutral} />
-            <StatisticLine text="bad" value ={bad} />
-            <StatisticLine text="all" value={all} />
-            <StatisticLine text="average" value={(good+bad*(-1))/all} />
-            <StatisticLine text="positive" value={[pos,"%"].join(" ")} />
-        </div>)
+        <table>
+            <tbody>
+                
+                    <StatisticLine text="good" value={good} />
+                    <StatisticLine text="neutral" value={neutral} />
+                    <StatisticLine text="bad" value={bad} />
+                    <StatisticLine text="all" value={all} />
+                    <StatisticLine text="average" value={(good + bad * (-1)) / all} />
+                    <StatisticLine text="positive" value={[pos, "%"].join(" ")} />
+                
+            </tbody>
+        </table>)
 }
 
 const Button = ({ text, handler }) => {
