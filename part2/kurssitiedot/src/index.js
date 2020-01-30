@@ -1,47 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-const Header = ({ text }) => {
-  return (
-    <h1>{text}</h1>
-  )
-}
-
-const Part = (props) => {
-  return (
-    <p>
-      {props.name} {props.ex_amnt}
-    </p>
-  )
-}
-
-const Content = (props) => {
-  const content = props.parts.map(part => <Part key={part.name} name={part.name} ex_amnt={part.exercises} />)
-  return (
-    <>
-      {content}
-    </>
-  )
-}
-
-const Total = ({ exercises }) => {
-  return (
-    <p>Total of exercises {exercises.reduce((a, b) => a + b, 0)}</p>
-  )
-}
-
-const Course = ({ course }) => {
-  return (
-    <>
-      <Header text={course.name} />
-      <Content parts={course.parts} />
-      <Total exercises={course.parts.map(part => part.exercises)} />
-    </>
-  )
-}
+import Course from './components/Course'
 
 const App = () => {
-  const course = {
+  const courses = [{
     name: 'Half Stack application development',
     id: 1,
     parts: [
@@ -59,14 +21,41 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4
+      }
+    ]
+  },
+  {
+    name: 'Node.js',
+    id: 2,
+    parts: [
+      {
+        name: 'Routing',
+        exercises: 3,
+        id: 1
+      },
+      {
+        name: 'Middlewares',
+        exercises: 7,
+        id: 2
       }
     ]
   }
+  ]
+
+  const content = courses.map(course => <Course course={course}/>)
 
   return (
+    <>
+    <h2>Web development curriculum</h2>
     <div>
-      <Course course={course} />
+      {content}
     </div>
+  </>
   )
 }
 
