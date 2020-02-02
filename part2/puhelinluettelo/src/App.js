@@ -12,12 +12,12 @@ const App = () => {
 
   useEffect(() => {
     axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      console.log('got response on persons')
-      setPersons(response.data)
-    })
-  },[])
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('got response on persons')
+        setPersons(response.data)
+      })
+  }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -29,10 +29,15 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    setPersons(persons.concat(personObject))
-    console.log(persons)
-    setNewName('')
-    setNewNumber('')
+
+    axios.post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        setPersons(persons.concat(personObject))
+        console.log(persons)
+        setNewName('')
+        setNewNumber('')
+      })
+
   }
 
   const handleNameChange = (event) => {
