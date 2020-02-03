@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Entry from './components/Entry'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import { getAll, create, deletion } from './services/persons'
+import { getAll, create, deletion, update } from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -14,10 +14,24 @@ const App = () => {
     getAll().then(data => setPersons(data))
   }, [])
 
+  const updatePerson = (idx) => {
+    window.confirm(`${newName} is already added to phonebook, replace existing number?`)
+
+    const old = persons[idx]
+
+    update(old.id, { name: old.name, number: newNumber }).then(updated => {
+      getAll().then(data => setPersons(data))
+      console.log("After update ", persons)
+      setNewName('')
+      setNewNumber('')
+    })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.map(person => person.name).indexOf(newName) !== -1) {
-      alert(`${newName} is already added to phonebook`)
+    const idx = persons.map(person => person.name).indexOf(newName)
+    if (idx !== -1) {
+      updatePerson(idx)
       return
     }
     const personObject = {
@@ -45,10 +59,10 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
-  const deletePerson = (id) => {
-    window.confirm("Are you sure?")
-    deletion(id).then(deleted => {
-      setPersons(persons.filter(person => person.id !== id))
+  const deletePerson = (person) => {
+    window.confirm(`Delete ${person.name}?`)
+    deletion(person.id).then(deleted => {
+      setPersons(persons.filter(p => p.id !== person.id))
       console.log(persons)
     })
   }
@@ -58,7 +72,7 @@ const App = () => {
 
   const entryList = personsToShow.map(person => {
     return (
-        <Entry key={person.name} person={person} deletePerson={deletePerson}/>
+      <Entry key={person.name} person={person} deletePerson={deletePerson} />
     )
   })
 
