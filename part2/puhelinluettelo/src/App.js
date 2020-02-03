@@ -4,6 +4,7 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import { getAll, create, deletion, update } from './services/persons'
 import Notification from './components/Notification'
+import Error from './components/Error'
 
 
 
@@ -13,6 +14,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [message, setMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     getAll().then(data => setPersons(data))
@@ -25,18 +27,30 @@ const App = () => {
       setMessage(null)
     }, 5000)
   }
-  
+
+  const doErroring = (text) => {
+    setErrorMessage(text)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+
   const updatePerson = (idx) => {
     window.confirm(`${newName} is already added to phonebook, replace existing number?`)
-    const old = persons[idx]
-    update(old.id, { name: old.name, number: newNumber }).then(updated => {
-      getAll().then(data => setPersons(data))
-      console.log("After update ", persons)
-      doMessaging(`Number of ${newName} was updated.`)
-      setNewName('')
-      setNewNumber('')
 
-    })
+    const old = persons[idx]
+    update(old.id, { name: old.name, number: newNumber })
+      .then(updated => {
+        getAll().then(data => setPersons(data))
+        console.log("After update ", persons)
+        doMessaging(`Number of ${newName} was updated.`)
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        console.log('fail')
+        doErroring(`Could not update ${old.name}, not found on server.`)
+      })
   }
 
 
@@ -51,13 +65,18 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    create(personObject).then(added => {
-      setPersons(persons.concat(added))
-      console.log(persons)
-      doMessaging(`Added ${newName} succesfully.`)
-      setNewName('')
-      setNewNumber('')
-    })
+    create(personObject)
+      .then(added => {
+        setPersons(persons.concat(added))
+        console.log(persons)
+        doMessaging(`Added ${newName} succesfully.`)
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        console.log('fail')
+        doErroring(`Could not add ${newName}.`)
+      })
 
   }
 
@@ -75,11 +94,18 @@ const App = () => {
 
   const deletePerson = (person) => {
     window.confirm(`Delete ${person.name}?`)
-    deletion(person.id).then(deleted => {
-      setPersons(persons.filter(p => p.id !== person.id))
-      console.log(persons)
-      doMessaging(`Deleted ${person.name}`)
-    })
+
+    deletion(person.id)
+      .then(deleted => {
+        setPersons(persons
+          .filter(p => p.id !== person.id))
+        console.log(persons)
+        doMessaging(`Deleted ${person.name}`)
+      })
+      .catch(error => {
+        console.log('fail')
+        doErroring(`Could not delete ${person.name}, not found on server.`)
+      })
   }
 
   const personsToShow = persons.filter(person => person.name.startsWith(newFilter))
@@ -94,6 +120,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} />
+      <Error message={errorMessage} />
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
       <h3>Add a new number</h3>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
