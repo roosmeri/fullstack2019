@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Entry from './components/Entry'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import { getAll, create } from './services/persons'
+import { getAll, create, deletion } from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -45,7 +45,22 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
+  const deletePerson = (id) => {
+    window.confirm("Are you sure?")
+    deletion(id).then(deleted => {
+      setPersons(persons.filter(person => person.id !== id))
+      console.log(persons)
+    })
+  }
+
+
   const personsToShow = persons.filter(person => person.name.startsWith(newFilter))
+
+  const entryList = personsToShow.map(person => {
+    return (
+        <Entry key={person.name} person={person} deletePerson={deletePerson}/>
+    )
+  })
 
   return (
     <div>
@@ -55,7 +70,7 @@ const App = () => {
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
       <div>
-        {personsToShow.map(person => <Entry key={person.name} name={person.name} number={person.number} />)}
+        {entryList}
       </div>
     </div>
   )
