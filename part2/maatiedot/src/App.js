@@ -8,31 +8,45 @@ const Filter = ({ newFilter, handleFilterChange }) => {
   )
 }
 
-const CountryList = ({ countries, newCountryName }) => {
+const CountryView = ({ c }) => {
+  return (
+    <div>
+      <h3>{c.name}</h3>
+      <h4>languages</h4>
+      {c.languages.map(l => <li key={l.name}>{l.name}</li>)}
+      <img src={c.flag} alt='failed to fetch' width="200" height="100"></img>
+    </div>
+  )
+}
+
+const CountryList = ({ countries, newCountryName, setNewCountryName }) => {
   const matches = countries.filter(country => country.name.toLowerCase()
-    .startsWith(newCountryName.toLowerCase()))
+    .includes(newCountryName.toLowerCase()))
 
   if (matches.length === 1) {
     const c = matches[0]
-    return (
-      <div>
-        <h3>{c.name}</h3>
-        <h4>languages</h4>
-        {c.languages.map(l => <li>{l.name}</li>)}
-        <img src={c.flag} alt='failed to fetch' width="200" height="100"></img>
-      </div>
-    )
+    return <CountryView c={c} />
   }
   if (matches.length <= 10) {
-    return matches.map(country => <Entry key={country.name} country={country} />)
+    return matches.map(country => {
+      return (
+        <Entry key={country.name} country={country} setNewCountryName={setNewCountryName} />
+      )
+    })
   }
   return <li>Too many matches, specify another filter.</li>
 }
 
-const Entry = ({ country }) => {
+const Entry = ({ country, setNewCountryName }) => {
   return (
-    <li>{country.name}</li>
+    <div>
+      <li>{country.name}</li><button key={country.id} onClick={() => handleClick(country, setNewCountryName)}>show</button>
+    </div>
   )
+}
+const handleClick = (country, setNewCountryName) => {
+  console.log('clicked show')
+  setNewCountryName(country.name)
 }
 
 function App() {
@@ -55,8 +69,8 @@ function App() {
   return (
     <div>
       <Filter newFilter={newCountryName} handleFilterChange={handleCountryNameChange} />
-      <div>
-        <CountryList countries={countries} newCountryName={newCountryName} />
+      <div id="replacable">
+        <CountryList countries={countries} newCountryName={newCountryName} setNewCountryName={setNewCountryName} />
       </div>
     </div>
   );
