@@ -74,8 +74,8 @@ const App = () => {
         setNewNumber('')
       })
       .catch(error => {
-        console.log('fail')
-        doErroring(`Could not add ${newName}.`)
+        console.log(error.response.data)
+        doErroring(error.response.data.error)
       })
 
   }
