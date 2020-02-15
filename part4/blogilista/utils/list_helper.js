@@ -7,13 +7,28 @@ const totalLikes = (blogs) => {
 }
 
 const favouriteBlog = (blogs) => {
-    return blogs.reduce(function(prev, current) {
+    return blogs.reduce(function (prev, current) {
         return (prev.likes > current.likes) ? prev : current
     })
+}
+
+const mostBlogs = (blogs) => {
+    const freqs = {}
+    let max = ''
+    blogs.forEach(element => {
+        name = element.author
+        freqs[name] = freqs[name] ? freqs[name] + 1 : 1
+        if (!freqs[max] || freqs[max] < freqs[name]) {max = name}
+    });
+    return {
+        'author':max,
+        'blogs': freqs[max]
+    }
 }
 
 module.exports = {
     dummy,
     totalLikes,
-    favouriteBlog
+    favouriteBlog,
+    mostBlogs
 }
