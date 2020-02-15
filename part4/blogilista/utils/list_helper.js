@@ -18,11 +18,25 @@ const mostBlogs = (blogs) => {
     blogs.forEach(element => {
         name = element.author
         freqs[name] = freqs[name] ? freqs[name] + 1 : 1
-        if (!freqs[max] || freqs[max] < freqs[name]) {max = name}
+        if (!freqs[max] || freqs[max] < freqs[name]) { max = name }
     });
     return {
-        'author':max,
+        'author': max,
         'blogs': freqs[max]
+    }
+}
+
+const mostLikes = (blogs) => {
+    const freqs = {}
+    let max = ''
+    blogs.forEach(element => {
+        name = element.author
+        freqs[name] = freqs[name] ? freqs[name] + element.likes : element.likes
+        if (!freqs[max] || freqs[max] < freqs[name]) { max = name }
+    })
+    return {
+        'author': max,
+        'likes': freqs[max]
     }
 }
 
@@ -30,5 +44,6 @@ module.exports = {
     dummy,
     totalLikes,
     favouriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
