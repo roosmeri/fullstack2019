@@ -23,12 +23,13 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({
       error: 'invalid token'
     })
-
-    next(error)
   }
 
-  module.exports = {
-    requestLogger,
-    unknownEndpoint,
-    errorHandler
-  }
+  next(error)
+}
+
+module.exports = {
+  requestLogger,
+  unknownEndpoint,
+  errorHandler
+}
