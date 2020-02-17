@@ -81,6 +81,56 @@ test('blog can be added', async () => {
 
 })
 
+test('blog added with no likes gets 0 likes', async () => {
+    await Blog.deleteMany({})
+
+    const newBlog = {
+        author: 'Bella',
+        title: 'AWS Stories',
+        url: 'www.stories.com',
+        likes: undefined
+    }
+    await api.post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const contents = response.body
+
+    expect(response.body.length).toBe(1)
+    expect(contents[0]['likes']).toBe(0)
+
+})
+
+
+test('blog added with no url fails', async () => {
+
+    const newBlog = {
+        author: 'Bella',
+        title: 'AWS Stories',
+        likes: 7
+    }
+    await api.post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+})
+
+test('blog added with no title fails', async () => {
+
+    const newBlog = {
+        author: 'Bella',
+        url: 'http://url.url',
+        likes: 7
+    }
+    await api.post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
