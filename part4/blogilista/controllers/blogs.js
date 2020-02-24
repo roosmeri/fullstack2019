@@ -7,20 +7,17 @@ const jwt = require('jsonwebtoken')
 const getTokenFrom = request => {
     const authorization = request.get('authorization')
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-      console.log('getting token')
-      return authorization.substring(7)
+        console.log('getting token')
+        return authorization.substring(7)
     }
     return null
-  }
+}
 
-blogsRouter.get('/', async (request, response, next) => {
-    try {
-        const blogs = await Blog.find({})
-            .populate('user', { username: 1, name: 1, id: 1 })
-        response.json(blogs)
-    } catch (exception) {
-        next(exception)
-    }
+blogsRouter.get('/', async (request, response) => {
+    const blogs = await Blog
+        .find({}).populate('user', { username: 1, name: 1 })
+
+    response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response, next) => {
@@ -60,13 +57,18 @@ blogsRouter.delete('/:id', async (request, response, next) => {
         if (!token || !decodedToken.id) {
             return response.status(401).json({ error: 'token missing or invalid' })
         }
+
         const user = await User.findById(decodedToken.id)
         const blog = await Blog.findById(request.params.id)
-        if (user._id.toString() === blog.user.toString()) {
-            await Blog.findByIdAndRemove(request.params.id)
-        } else {
-            return response.status(401).json({ error: 'not authorized' })
+        console.log(user)
+        console.log(blog.user)
+        if (blog.user.toString() !== user._id.toString()) {
+            return response.status(401).json({ error: 'only the creator can delete blogs' })
         }
+
+        await blog.remove()
+        user.blogs = user.blogs.filter(b => b.id.toString() !== request.params.id.toString())
+        await user.save()
         response.status(204).end()
     } catch (exception) {
         next(exception)
