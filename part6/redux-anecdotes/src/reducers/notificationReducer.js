@@ -1,5 +1,7 @@
 const initialNotification = 'nothing special'
 
+let timeout = null
+
 const notificationReducer = (state = initialNotification, action) => {
   console.log('state now: ', state)
   console.log('action', action)
@@ -16,7 +18,8 @@ const notificationReducer = (state = initialNotification, action) => {
 
 export const createNotification = (message, time) => {
   return async dispatch => {
-    setTimeout(() => {
+    timeout = setTimeout(() => {
+      clearTimeout(timeout)
       dispatch(deleteNotification())
     }, time * 1000)
     dispatch({
