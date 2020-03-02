@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import anecdoteService from '../services/anecdotes'
 import {
-  voteAnecdote
+  voteAnecdote,
+  initializeAnecdotes
 } from '../reducers/anecdoteReducer'
 import {
   createNotification,
@@ -12,6 +14,12 @@ const AnecdoteList = () => {
   // @ts-ignore
   const anecdotes = useSelector(state => state.anecdote)
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    anecdoteService.getAll().then(anecdotes =>
+      dispatch(initializeAnecdotes(anecdotes))
+    )
+  }, [dispatch])
 
   const vote = (id, content) => {
     console.log('vote', id)
