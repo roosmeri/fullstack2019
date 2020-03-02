@@ -5,6 +5,36 @@ import reducer from './reducer'
 
 const store = createStore(reducer)
 
+const StatisticLine = ({ text, value }) => <tr><td>{text}</td><td>{value}</td></tr>
+
+const Statistics = () => {
+  const state = store.getState()
+  var sum = 0;
+
+  for (var key in state) {
+    sum += parseInt(state[key]);
+  }
+
+  if (sum === 0) {
+    return (<div>No feedback given</div>)
+  }
+  const pos = state.good / sum
+  return (
+    <table>
+      <tbody>
+
+        <StatisticLine text="good" value={state.good} />
+        <StatisticLine text="neutral" value={state.ok} />
+        <StatisticLine text="bad" value={state.bad} />
+        <StatisticLine text="all" value={sum} />
+        <StatisticLine text="average" value={(state.good + state.bad * (-1)) / sum} />
+        <StatisticLine text="positive" value={[pos, "%"].join(" ")} />
+
+      </tbody>
+    </table>)
+}
+
+
 const App = () => {
   const good = () => {
     store.dispatch({
@@ -24,15 +54,23 @@ const App = () => {
     })
   }
 
+  const reset = () => {
+    store.dispatch({
+      type: 'ZERO'
+    })
+  }
+
   return (
     <div>
-      <button onClick={good}>hyvä</button> 
-      <button onClick={ok}>neutraali</button> 
+      <button onClick={good}>hyvä</button>
+      <button onClick={ok}>neutraali</button>
       <button onClick={bad}>huono</button>
-      <button>nollaa tilastot</button>
+      <button onClick={reset}>nollaa tilastot</button>
       <div>hyvä {store.getState().good}</div>
       <div>neutraali</div>
       <div>huono</div>
+      <h2>statistics</h2>
+      <Statistics />
     </div>
   )
 }
