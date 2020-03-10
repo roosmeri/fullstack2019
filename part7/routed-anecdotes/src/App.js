@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Switch, Route, Link, useParams
+  Switch, Route, Link, Redirect,
+  useParams, useHistory
 } from "react-router-dom"
 
 const Menu = () => {
@@ -65,20 +66,25 @@ const Footer = () => (
   </div>
 )
 
-const CreateNew = (props) => {
+const CreateNew = ({setNotification, addNew}) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const history = useHistory()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
+    addNew({
       content,
       author,
       info,
       votes: 0
     })
+    history.push('/')
+    setNotification(`Created new anecdote ${content}`)
+    setTimeout(() => {
+      setNotification(null)
+    }, 10000)
   }
 
   return (
@@ -101,6 +107,7 @@ const CreateNew = (props) => {
       </form>
     </div>
   )
+
 
 }
 
@@ -148,12 +155,15 @@ const App = () => {
   return (
     <Router>
       <Menu />
+      {notification
+        ? <em>{notification}</em> : null
+      }
       <Switch>
         <Route path="/anecdotes/:id">
           <Anecdote anecdotes={anecdotes} />
         </Route>
         <Route path="/create">
-          <CreateNew addNew={addNew} />
+          <CreateNew setNotification={setNotification} addNew={addNew} />
         </Route>
         <Route path="/about">
           <About />
