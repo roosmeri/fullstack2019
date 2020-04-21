@@ -59,7 +59,7 @@ const typeDefs = gql`
   type Mutation {
     addBook(
       title: String!
-      published: Int
+      published: Int!
       author: String!
       genres: [String]!
     ): Book
@@ -89,7 +89,6 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
-      console.log(args)
       if (args) {
         if (args.author && args.genre) {
           return Book.find({ genres: { "$in": [args.genre] } }).populate('author').find({ 'author.name': args.author })

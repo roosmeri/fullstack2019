@@ -1,25 +1,15 @@
-  
+
 import React from 'react'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import AuthorEditForm from './AuthorEditForm'
+import { ALL_AUTHORS } from '../queries'
 
-const ALL_AUTHORS = gql`
-  query {
-    allAuthors  {
-      name
-      born
-      bookCount
-      id
-    }
-  }
-`
-
-const Authors = (props) => {  
-  const result = useQuery(ALL_AUTHORS,{
+const Authors = (props) => {
+  const result = useQuery(ALL_AUTHORS, {
     pollInterval: 2000
-  })  
-  
-  if (result.loading)  {
+  })
+
+  if (result.loading) {
     return <div>loading...</div>
   }
 
@@ -53,8 +43,8 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
+      {props.token ? <AuthorEditForm authors={authors} /> : null}
 
-    <AuthorEditForm authors={authors} />
 
     </div>
   )

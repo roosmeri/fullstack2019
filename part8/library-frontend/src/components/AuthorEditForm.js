@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
-import { gql, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
+import { EDIT_BIRTHYEAR } from '../mutations'
 
-const EDIT_BIRTHYEAR = gql`
-  mutation editAuthor($name: String!, $setBornTo: Int!) {
-    editAuthor(name: $name, setBornTo: $setBornTo)  {
-      name
-      born
-      bookCount
-      id
-    }
-  }
-`
 const AuthorEditForm = ({ authors }) => {
   const [born, setBorn] = useState('')
   const [selected, setSelected] = useState('')
