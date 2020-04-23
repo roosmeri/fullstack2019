@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react'
-import { useMutation } from '@apollo/client'
-import { LOGIN } from '../queries'
+import { useMutation, useQuery } from '@apollo/client'
+import { LOGIN } from '../mutations'
+import { FAVORITE_GENRE } from '../queries'
 
-const LoginForm = ({ show, setError, setToken, setPage }) => {
+const LoginForm = ({ show, setError, setToken, setPage, setFavoriteGenre }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const [ login, result ] = useMutation(LOGIN, {
+  const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
       setError(error.graphQLErrors[0].message)
     }
-  })  
+  })
+
+  const result0 = useQuery(FAVORITE_GENRE)
 
   useEffect(() => {
-    if ( result.data ) {
+    if (result.data) {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('user-token', token)
+    }
+    if (result0.data) {
+      setFavoriteGenre(result0.data.me.favoriteGenre)
     }
   }, [result.data]) // eslint-disable-line
 

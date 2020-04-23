@@ -23,7 +23,7 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 const typeDefs = gql`
   type User {
     username: String!
-    favoriteGenre: String!
+    favoriteGenre: String
     id: ID!
   }
 
@@ -54,6 +54,7 @@ const typeDefs = gql`
     allAuthors: [Author!]!
     findAuthor(name: String!): Author
     me: User
+    allUsers: [User!]!
   }
 
   type Mutation {
@@ -74,7 +75,7 @@ const typeDefs = gql`
     ): Author
     createUser(
       username: String!
-      favoriteGenre: String!
+      favoriteGenre: String
     ): User
     login(
       username: String!
@@ -108,6 +109,7 @@ const resolvers = {
       Book.find({ title: args.title }),
     authorCount: () => Author.collection.countDocuments(),
     allAuthors: () => Author.find({}),
+    allUsers: () => User.find({}),
     findAuthor: (root, args) => Author.findOne({ name: args.name }),
     me: (root, args, context) => {
       return context.currentUser
@@ -185,7 +187,7 @@ const resolvers = {
       return Author.findOne({ name: args.name })
     },
     createUser: (root, args) => {
-      const user = new User({ username: args.username })
+      const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre })
 
       return user.save()
         .catch(error => {
