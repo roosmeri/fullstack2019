@@ -8,7 +8,11 @@ const NewBook = (props) => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
-  const [createBook] = useMutation(CREATE_BOOK)
+  const [createBook] = useMutation(CREATE_BOOK, {
+    onError: (error) => {
+      props.setError(error.graphQLErrors[0].message)
+    }
+  })
 
   if (!props.show) {
     return null
