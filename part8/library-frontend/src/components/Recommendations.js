@@ -3,7 +3,6 @@ import { useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../queries'
 
 const Recommendations = (props) => {
-
   const result = useQuery(ALL_BOOKS, {
     variables: { genre: props.favoriteGenre },
     pollInterval: 2000
@@ -26,26 +25,26 @@ const Recommendations = (props) => {
 
       <div>books in your favorite genre: <b>{props.favoriteGenre}</b></div>
       <div>
-        <table>
-          <tbody>
-            <tr>
-              <th></th>
-              <th>
-                author
+      <table>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>
+              author
             </th>
-              <th>
-                published
+            <th>
+              published
             </th>
+          </tr>
+          {books.map(a =>
+            <tr key={a.title}>
+              <td>{a.title}</td>
+              <td>{a.author.name}</td>
+              <td>{a.published}</td>
             </tr>
-            {books.map(a =>
-              <tr key={a.title}>
-                <td>{a.title}</td>
-                <td>{a.author.name}</td>
-                <td>{a.published}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+          )}
+        </tbody>
+      </table>
       </div>
 
     </div>

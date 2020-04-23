@@ -4,22 +4,26 @@ import { ALL_BOOKS } from '../queries'
 
 const Books = (props) => {
   const [genre, setGenre] = useState('')
-  const result = useQuery(ALL_BOOKS, {
+  const allBookResult = useQuery(ALL_BOOKS, { pollInterval: 2000})
+
+  const genreBookResult = useQuery(ALL_BOOKS, {
+    variables: { genre },
     pollInterval: 2000
   })
 
-  if (result.loading) {
+  if (genreBookResult.loading || allBookResult.loading ) {
     return <div>loading...</div>
   }
 
   if (!props.show) {
     return null
   }
-  console.log(result.data)
-  const books = result.data.allBooks
+
+  const allBooks = allBookResult.data.allBooks
+  const books = genreBookResult.data.allBooks
 
   const genres = new Set()
-  books.map(b => b.genres).forEach(list => {
+  allBooks.map(b => b.genres).forEach(list => {
     list.forEach(genre => {
       genres.add(genre)
     })
@@ -41,16 +45,7 @@ const Books = (props) => {
               published
             </th>
           </tr>
-          {genre ?
-            books.filter(b => b.genres.includes(genre)).map(a =>
-              <tr key={a.title}>
-                <td>{a.title}</td>
-                <td>{a.author.name}</td>
-                <td>{a.published}</td>
-              </tr>
-            )
-            :
-            books.map(a =>
+            {books.map(a =>
               <tr key={a.title}>
                 <td>{a.title}</td>
                 <td>{a.author.name}</td>
@@ -61,7 +56,7 @@ const Books = (props) => {
       </table>
       <div>
         {Array.from(genres).map(g =>
-          <button onClick={() => setGenre(g)}>{g}</button>)
+          <button key={g} onClick={() => setGenre(g)}>{g}</button>)
         }
         <button onClick={() => setGenre('')}>all books</button>
       </div>
